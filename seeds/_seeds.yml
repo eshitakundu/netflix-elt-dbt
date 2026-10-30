@@ -1,0 +1,14 @@
+version: 2
+
+seeds:
+  - name: genre_groups
+    description: Hand-maintained mapping of MovieLens genres to broader groups used in reporting.
+    columns:
+      - name: genre
+        tests: [not_null, unique]
+      - name: genre_group
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [Thrill, Dark, Story, Light, Family, Imagination, Factual, Format]
