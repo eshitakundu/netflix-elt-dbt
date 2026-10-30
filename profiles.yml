@@ -1,0 +1,7 @@
+netflix:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: data/netflix.duckdb
+      threads: 4
