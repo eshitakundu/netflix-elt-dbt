@@ -4,7 +4,7 @@
 
 An end-to-end ELT pipeline over the MovieLens ratings dataset: a Python script extracts and loads the raw CSVs into DuckDB untouched, then dbt transforms them into tested staging views and analytics marts. The whole thing runs locally in about 10 seconds and on every push in GitHub Actions.
 
-I first planned this on Snowflake + S3. It now runs on DuckDB, so anyone can clone and run it with no cloud account, and the dbt models stay warehouse-agnostic SQL.
+**Timeline:** started May 2026 as a Snowflake + S3 plan · rebuilt October 2026 on dbt + DuckDB with tests and CI. It now runs on DuckDB so anyone can clone and run it with no cloud account, and the dbt models stay warehouse-agnostic SQL.
 
 ## Architecture
 
