@@ -1,0 +1,60 @@
+version: 2
+
+models:
+  - name: fct_ratings
+    description: Rating events. Grain is one rating per user per movie.
+    columns:
+      - name: rating_id
+        tests: [not_null, unique]
+      - name: user_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_users')
+                field: user_id
+      - name: movie_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_movies')
+                field: movie_id
+
+  - name: dim_movies
+    description: One row per movie with release info, external ids and its rating profile.
+    columns:
+      - name: movie_id
+        tests: [not_null, unique]
+      - name: rating_count
+        description: Zero for movies nobody has rated yet.
+        tests: [not_null]
+      - name: weighted_rating
+        description: Bayesian average that shrinks low-volume movies toward the global mean (var min_votes_for_weighting, default 10).
+
+  - name: dim_users
+    description: One row per user with activity stats and a rater segment.
+    columns:
+      - name: user_id
+        tests: [not_null, unique]
+      - name: rater_segment
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [casual, regular, power]
+
+  - name: bridge_movie_genres
+    description: Movie-to-genre bridge (a movie can have several genres), enriched with the reporting genre group.
+    columns:
+      - name: genre
+        tests: [not_null]
+      - name: genre_group
+        description: Every genre must be mapped in seeds/genre_groups.csv, so a new genre in the source fails this test.
+        tests: [not_null]
+
+  - name: mart_genre_performance
+    description: Genre-level catalogue size, rating volume and rating quality.
+    columns:
+      - name: genre
+        tests: [not_null, unique]
