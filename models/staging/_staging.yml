@@ -1,0 +1,51 @@
+version: 2
+
+models:
+  - name: stg_movies
+    description: Movies with the release year parsed out of the title and genres as a list.
+    columns:
+      - name: movie_id
+        tests: [not_null, unique]
+      - name: title
+        tests: [not_null]
+      - name: release_year
+        description: Null for the handful of titles that carry no year.
+
+  - name: stg_ratings
+    description: One row per user rating, timestamps converted from Unix seconds.
+    columns:
+      - name: rating_id
+        description: Surrogate key, user_id-movie_id. A user rates a movie once.
+        tests: [not_null, unique]
+      - name: movie_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_movies')
+                field: movie_id
+      - name: rating
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0]
+                quote: false
+
+  - name: stg_tags
+    description: User tags, lower-cased and trimmed, blanks removed.
+    columns:
+      - name: tag
+        tests: [not_null]
+      - name: movie_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_movies')
+                field: movie_id
+
+  - name: stg_links
+    description: IMDb and TMDb ids per movie.
+    columns:
+      - name: movie_id
+        tests: [not_null, unique]

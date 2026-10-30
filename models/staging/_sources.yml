@@ -1,0 +1,22 @@
+version: 2
+
+sources:
+  - name: raw
+    description: MovieLens (ml-latest-small) CSVs landed as-is by scripts/load_raw.py. Every column is text; staging does the casting.
+    schema: raw
+    tables:
+      - name: movies
+        columns:
+          - name: movieId
+            tests: [not_null, unique]
+      - name: ratings
+        columns:
+          - name: userId
+            tests: [not_null]
+          - name: movieId
+            tests: [not_null]
+      - name: tags
+      - name: links
+        columns:
+          - name: movieId
+            tests: [not_null, unique]
